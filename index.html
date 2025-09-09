@@ -1,401 +1,717 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FARMAILOS - Космические проекты</title>
-<style>
-    body, html {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        font-family: 'Arial', sans-serif;
-        background: #000 url('video/space.jpg') no-repeat center center fixed;
-        background-size: cover;
-        color: #fff;
-        overflow-x: hidden;
-        cursor: auto;
-    }
-
-    /* Canvas для звезд */
-    #starfield {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -2;
-        pointer-events: none;
-    }
-
-    /* Фоновое видео */
-    #bg-video {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        opacity: 0.15;
-        z-index: -1;
-    }
-
-    header {
-        background: rgba(0,0,0,0.7);
-        color: #fff;
-        padding: 20px 0;
-        text-align: center;
-        box-shadow: 0 0 10px #0ff;
-        position: relative;
-        z-index: 1;
-        transition: background 0.3s;
-    }
-
-    header h1 {
-        margin: 0;
-        font-size: 3em;
-        text-shadow: 0 0 10px #0ff;
-    }
-
-    nav a {
-        color: #0ff;
-        text-decoration: none;
-        margin: 0 15px;
-        font-weight: bold;
-        transition: 0.3s;
-        position: relative;
-    }
-
-    nav a:hover {
-        color: #fff;
-        text-shadow: 0 0 5px #0ff;
-    }
-
-    section {
-        max-width: 1000px;
-        margin: 60px auto;
-        padding: 0 20px;
-        position: relative;
-        z-index: 1;
-    }
-
-    h2 {
-        color: #0ff;
-        margin-bottom: 20px;
-        text-shadow: 0 0 10px #0ff;
-        text-align: center;
-    }
-
-    #search-box {
-        width: 100%;
-        padding: 12px;
-        margin-bottom: 20px;
-        border-radius: 5px;
-        border: 1px solid #0ff;
-        background: rgba(0,0,0,0.5);
-        color: #fff;
-        outline: none;
-        transition: 0.3s;
-    }
-
-    #search-box:focus {
-        border-color: #0ff;
-        box-shadow: 0 0 10px #0ff;
-    }
-
-    .filter-buttons {
-        text-align: center;
-        margin-bottom: 30px;
-    }
-
-    .filter-buttons button {
-        margin: 0 5px;
-        padding: 10px 15px;
-        border: 1px solid #0ff;
-        border-radius: 5px;
-        background: rgba(0,0,0,0.6);
-        color: #0ff;
-        cursor: pointer;
-        font-weight: bold;
-        transition: 0.3s;
-    }
-
-    .filter-buttons button:hover, .filter-buttons button.active {
-        background: rgba(0,255,255,0.3);
-        color: #0ff;
-    }
-
-    .project-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        justify-content: center;
-    }
-
-    /* Улучшенная анимация проектов */
-    .project {
-        background: rgba(0,0,0,0.6);
-        border: 1px solid #0ff;
-        border-radius: 15px;
-        padding: 20px;
-        flex: 1 1 250px;
-        box-shadow: 0 0 15px #0ff;
-        display: flex;
-        flex-direction: column;
-        transition: transform 0.6s ease, opacity 0.6s ease, box-shadow 0.3s, background 0.3s;
-        opacity: 0;
-        transform: translateY(20px) scale(0.95);
-    }
-
-    .project.visible {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-
-    .project:hover {
-        transform: translateY(-5px) scale(1.02);
-        box-shadow: 0 0 30px #0ff, 0 0 15px #0ff inset;
-        background: rgba(0,0,0,0.55);
-    }
-
-    .project h3 {
-        margin-bottom: 10px;
-        text-shadow: 0 0 5px #0ff;
-    }
-
-    .project p {
-        flex-grow: 1;
-    }
-
-    .download-btn {
-        background: linear-gradient(90deg, #0ff, #00f);
-        color: #000;
-        text-decoration: none;
-        text-align: center;
-        padding: 10px 15px;
-        border-radius: 8px;
-        margin-top: 10px;
-        font-weight: bold;
-        transition: 0.3s;
-        box-shadow: 0 0 10px #0ff;
-    }
-
-    .download-btn:hover {
-        background: linear-gradient(90deg, #fff, #0ff);
-        color: #000;
-        box-shadow: 0 0 20px #0ff;
-    }
-
-    .news, .subscribe {
-        background: rgba(0,0,0,0.6);
-        padding: 20px;
-        border-radius: 15px;
-        margin-top: 40px;
-        box-shadow: 0 0 20px #0ff;
-        transition: 0.3s;
-    }
-
-    .subscribe input {
-        width: 70%;
-        padding: 10px;
-        margin-right: 10px;
-        border-radius: 5px;
-        border: 1px solid #0ff;
-        background: rgba(0,0,0,0.5);
-        color: #fff;
-        outline: none;
-    }
-
-    .subscribe input:focus {
-        border-color: #0ff;
-        box-shadow: 0 0 10px #0ff;
-    }
-
-    .subscribe button {
-        padding: 10px 15px;
-        border-radius: 5px;
-        border: 1px solid #0ff;
-        background: #0ff;
-        color: #000;
-        font-weight: bold;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-
-    .subscribe button:hover {
-        background: #0cc;
-        box-shadow: 0 0 15px #0ff;
-    }
-
-    footer {
-        text-align: center;
-        padding: 20px;
-        background: rgba(0,0,0,0.7);
-        color: #0ff;
-        margin-top: 40px;
-        position: relative;
-        z-index: 1;
-    }
-
-    @media (max-width: 768px) {
-        .project {
-            flex: 1 1 90%;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmailos - Soldiers vs Brigands</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Orbitron', sans-serif;
         }
 
-        .subscribe input {
+        :root {
+            --main-bg-color: #0a0a14;
+            --dark-blue: #070b1a;
+            --neon-blue: #00a2ff;
+            --neon-light: #4dc6ff;
+            --text-color: #e0e0ff;
+            --accent-glow: 0 0 10px rgba(0, 162, 255, 0.7);
+            --card-bg: rgba(10, 15, 30, 0.8);
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--main-bg-color) 0%, var(--dark-blue) 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styles */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(0, 162, 255, 0.3);
+            position: relative;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+            color: var(--neon-blue);
+            text-shadow: var(--accent-glow);
+            animation: pulse 2s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        .logo-text {
+            font-size: 2.2rem;
+            font-weight: bold;
+            background: linear-gradient(to right, var(--neon-blue) 0%, var(--neon-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(0, 162, 255, 0.5);
+            letter-spacing: 2px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1.1rem;
+            padding: 8px 15px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: var(--neon-light);
+        }
+
+        nav a:hover::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
             width: 100%;
-            margin-bottom: 10px;
+            height: 2px;
+            background: var(--neon-blue);
+            box-shadow: var(--accent-glow);
         }
-    }
-</style>
+
+        /* Hero Section */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 60px 0;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(0, 162, 255, 0.8);
+            background: linear-gradient(to right, var(--neon-blue) 0%, #a5d8ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .cta-button {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, var(--neon-blue) 0%, #0066cc 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 162, 255, 0.5);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(0, 162, 255, 0.8);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border: 2px solid var(--neon-blue);
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 0 30px rgba(0, 162, 255, 0.5);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: var(--neon-blue);
+        }
+
+        .modal-title {
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--neon-light);
+            font-size: 1.8rem;
+        }
+
+        .download-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .download-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px;
+            background: rgba(0, 162, 255, 0.2);
+            border: 1px solid var(--neon-blue);
+            border-radius: 10px;
+            color: var(--text-color);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            background: rgba(0, 162, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 162, 255, 0.3);
+        }
+
+        /* News Section */
+        .news-section {
+            margin: 60px 0;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            text-align: center;
+            color: var(--neon-light);
+            text-shadow: 0 0 15px rgba(0, 162, 255, 0.5);
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--neon-blue);
+            box-shadow: var(--accent-glow);
+        }
+
+        .news-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .news-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(0, 162, 255, 0.2);
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .news-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--neon-blue);
+            opacity: 0.7;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 25px rgba(0, 162, 255, 0.2);
+            border-color: rgba(0, 162, 255, 0.4);
+        }
+
+        .news-date {
+            color: var(--neon-light);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .news-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--neon-light);
+        }
+
+        .news-content {
+            line-height: 1.6;
+        }
+
+        /* Updates Catalog */
+        .updates-catalog {
+            margin: 60px 0;
+        }
+
+        .update-filters {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 20px;
+            background: var(--card-bg);
+            border: 1px solid rgba(0, 162, 255, 0.3);
+            color: var(--text-color);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: rgba(0, 162, 255, 0.2);
+            border-color: var(--neon-blue);
+            box-shadow: var(--accent-glow);
+        }
+
+        .updates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .update-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(0, 162, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .update-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-light));
+        }
+
+        .update-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 25px rgba(0, 162, 255, 0.2);
+            border-color: rgba(0, 162, 255, 0.4);
+        }
+
+        .update-version {
+            color: var(--neon-blue);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            display: block;
+            font-weight: bold;
+        }
+
+        .update-date {
+            color: var(--neon-light);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .update-desc {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .update-features {
+            margin-top: 15px;
+        }
+
+        .update-features li {
+            margin-left: 20px;
+            margin-bottom: 5px;
+            position: relative;
+        }
+
+        .update-features li:before {
+            content: '•';
+            color: var(--neon-blue);
+            font-weight: bold;
+            position: absolute;
+            left: -15px;
+        }
+
+        /* Game Features */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(0, 162, 255, 0.2);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .feature-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(0, 162, 255, 0.1), transparent);
+            transition: 0.5s;
+            opacity: 0;
+        }
+
+        .feature-card:hover:before {
+            opacity: 1;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 25px rgba(0, 162, 255, 0.2);
+            border-color: rgba(0, 162, 255, 0.4);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--neon-blue);
+            margin-bottom: 20px;
+            text-shadow: var(--accent-glow);
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--neon-light);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 60px;
+            border-top: 1px solid rgba(0, 162, 255, 0.3);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--neon-blue);
+        }
+
+        .copyright {
+            font-size: 0.9rem;
+            color: rgba(224, 224, 255, 0.7);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .update-filters {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .filter-btn {
+                width: 200px;
+            }
+        }
+    </style>
 </head>
 <body>
-
-<canvas id="starfield"></canvas>
-
-<video id="bg-video" autoplay muted loop>
-    <source src="video/space.mp4" type="video/mp4">
-</video>
-
-<header>
-    <h1>FARMAILOS</h1>
-    <nav>
-        <a href="#projects">Проекты</a>
-        <a href="#news">Новости</a>
-        <a href="#contact">Контакты</a>
-    </nav>
-</header>
-
-<section id="projects">
-    <h2>Мои космические проекты</h2>
-    <input type="text" id="search-box" placeholder="Поиск по проектам...">
-    <div class="filter-buttons">
-        <button class="active" data-filter="all">Все</button>
-        <button data-filter="Игры">Игры</button>
-        <button data-filter="Бета">Бета</button>
-    </div>
-    <div class="project-list" id="project-list">
-        <div class="project" data-title="Bandit 0.5.3" data-category="Игры">
-            <h3>Bandit 0.5.3</h3>
-            <p>Мультиплеерная игра выпущена 14.10.2023</p>
-            <a href="files/project1.zip" class="download-btn" download>Скачать</a>
-        </div>
-        <div class="project" data-title="Bandit 0.6.0" data-category="Игры">
-            <h3>Bandit 0.6.0</h3>
-            <p>Мультиплеерная игра выпущена 29.10.2023</p>
-            <a href="files/project2.zip" class="download-btn" download>Скачать</a>
-        </div>
-        <div class="project" data-title="Soldiers vs Brigands 0.7.0 (Beta)" data-category="Бета">
-            <h3>Soldiers vs Brigands 0.7.0 (Beta)</h3>
-            <p>Скоро</p>
-            <a href="files/project3.zip" class="download-btn" download>Скачать</a>
+    <!-- Модальное окно выбора платформы -->
+    <div class="modal" id="downloadModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <h2 class="modal-title">Выберите платформу</h2>
+            <div class="download-options">
+                <button class="download-btn">
+                    <i class="fab fa-windows"></i> Скачать для Windows
+                </button>
+                <button class="download-btn">
+                    <i class="fab fa-linux"></i> Скачать для Linux
+                </button>
+            </div>
         </div>
     </div>
-</section>
 
-<section id="news">
-    <h2>Новости и обновления</h2>
-    <div class="news">
-        <p>18.08.2025 - Выпущена версия Bandit 0.6.0!</p>
-        <p>10.08.2025 - Soldiers vs Brigands 0.7.0 (Beta) скоро выйдет.</p>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-gamepad"></i></div>
+                <div class="logo-text">Farmailos</div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Главная</a></li>
+                    <li><a href="#">Игра</a></li>
+                    <li><a href="#">Обновления</a></li>
+                    <li><a href="#">Скачать</a></li>
+                    <li><a href="#">Поддержка</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <section class="hero">
+            <h1>Soldiers vs Brigands</h1>
+            <p>Динамичная 2D игра с видом сверху, где ты можешь сражаться 1 на 1 с противником или соревноваться с другом в режиме зомби!</p>
+            <button class="cta-button" id="downloadBtn">Загрузить</button>
+        </section>
+
+        <section class="news-section">
+            <h2 class="section-title">Последние новости</h2>
+            <div class="news-container">
+                <div class="news-card">
+                    <span class="news-date"><i class="far fa-calendar"></i> 29 Октября 2023</span>
+                    <h3 class="news-title">Космическое обновление 0.6.0</h3>
+                    <p class="news-content">Вышло масштабное обновление Soldiers vs Brigands! Добавлена новая лунная карта, система званий и полностью обновлённый интерфейс.</p>
+                </div>
+                <div class="news-card">
+                    <span class="news-date"><i class="far fa-calendar"></i> 14 Октября 2023</span>
+                    <h3 class="news-title">Неоновое обновление 0.5.3</h3>
+                    <p class="news-content">Добавлен общий чат, новое оформление, новая карта и расширенные настройки графики для лучшего игрового опыта!</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="updates-catalog">
+            <h2 class="section-title">Версии игры</h2>
+            
+            <div class="update-filters">
+                <button class="filter-btn active" data-filter="all">Все версии</button>
+                <button class="filter-btn" data-filter="bandit">Bandit</button>
+                <button class="filter-btn" data-filter="soldiers">Soldiers vs Brigands</button>
+            </div>
+            
+            <div class="updates-grid">
+                <div class="update-card" data-type="soldiers">
+                    <span class="update-version">Soldiers vs Brigands 0.7.0 (скоро)</span>
+                    <span class="update-date">Ноябрь 2023</span>
+                    <p class="update-desc">Dark Fantasy обновление</p>
+                    <ul class="update-features">
+                        <li>Полностью новый стиль Dark Fantasy</li>
+                        <li>Усовершенствованная система званий</li>
+                        <li>Расширенные настройки графики</li>
+                        <li>Новые карты и механики</li>
+                        <li>Обновлённый формат игры</li>
+                    </ul>
+                </div>
+                
+                <div class="update-card" data-type="bandit">
+                    <span class="update-version">Bandit 0.6.0</span>
+                    <span class="update-date">29 Октября 2023</span>
+                    <p class="update-desc">Космическое обновление</p>
+                    <ul class="update-features">
+                        <li>Новое оформление интерфейса</li>
+                        <li>Самая надежная версия на данный момент</li>
+                        <li>Новые визуальные эффекты</li>
+                        <li>Добавлена новая лунная карта</li>
+                        <li>Введена система званий</li>
+                    </ul>
+                </div>
+                
+                <div class="update-card" data-type="bandit">
+                    <span class="update-version">Bandit 0.5.3</span>
+                    <span class="update-date">14 Октября 2023</span>
+                    <p class="update-desc">Неоновое обновление</p>
+                    <ul class="update-features">
+                        <li>Добавлен общий чат</li>
+                        <li>Новое оформление игры</li>
+                        <li>Добавлена новая карта</li>
+                        <li>Расширенные настройки графики</li>
+                        <li>Улучшена стабильность игры</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-fist-raised"></i></div>
+                <h3 class="feature-title">Режим 1 на 1</h3>
+                <p>Сражайся один на один с противником в напряженных и динамичных поединках.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-user-friends"></i></div>
+                <h3 class="feature-title">Игра с друзьями</h3>
+                <p>Приглашай друзей и устраивайте эпические сражения на аренах.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-skull"></i></div>
+                <h3 class="feature-title">Режим зомби</h3>
+                <p>Соревнуйся с другом по количеству фрагов в захватывающем режиме выживания.</p>
+            </div>
+        </section>
     </div>
-    <div class="subscribe">
-        <h3>Подписка на новости:</h3>
-        <input type="email" placeholder="Ваш email">
-        <button>Подписаться</button>
-    </div>
-</section>
 
-<section id="contact">
-    <h2>Контакты</h2>
-    <p>Email: *************</p>
-    <p>Телефон: *********</p>
-</section>
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="#">Политика конфиденциальности</a>
+                <a href="#">Условия использования</a>
+                <a href="#">Поддержка</a>
+                <a href="#">Социальные сети</a>
+            </div>
+            <div class="copyright">
+                &copy; 2023 Farmailos. Все права защищены.
+            </div>
+        </div>
+    </footer>
 
-<footer>
-    <p>© 2025 FARMAILOS. Все права защищены.</p>
-</footer>
-
-<script>
-    const searchBox = document.getElementById('search-box');
-    const projects = document.querySelectorAll('.project');
-    const filterButtons = document.querySelectorAll('.filter-buttons button');
-    const downloadBtns = document.querySelectorAll('.download-btn');
-
-    // Поиск проектов
-    searchBox.addEventListener('input', () => {
-        const query = searchBox.value.toLowerCase();
-        projects.forEach(project => {
-            const title = project.dataset.title.toLowerCase();
-            const category = project.dataset.category.toLowerCase();
-            project.style.display = (title.includes(query) || category.includes(query)) ? 'flex' : 'none';
-        });
-    });
-
-    // Фильтрация проектов
-    filterButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-            const filter = button.dataset.filter;
-            projects.forEach(project => {
-                project.style.display = (filter === 'all' || project.dataset.category === filter) ? 'flex' : 'none';
+    <script>
+        // Рабочий каталог обновлений с фильтрацией
+        document.addEventListener('DOMContentLoaded', function() {
+            // Filter buttons functionality
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const updateCards = document.querySelectorAll('.update-card');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const filter = this.getAttribute('data-filter');
+                    
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    updateCards.forEach(card => {
+                        if (filter === 'all') {
+                            card.style.display = 'block';
+                        } else {
+                            if (card.getAttribute('data-type') === filter) {
+                                card.style.display = 'block';
+                            } else {
+                                card.style.display = 'none';
+                            }
+                        }
+                    });
+                });
+            });
+            
+            // Модальное окно для загрузки
+            const downloadBtn = document.getElementById('downloadBtn');
+            const downloadModal = document.getElementById('downloadModal');
+            const closeModal = document.getElementById('closeModal');
+            
+            downloadBtn.addEventListener('click', function() {
+                downloadModal.style.display = 'flex';
+            });
+            
+            closeModal.addEventListener('click', function() {
+                downloadModal.style.display = 'none';
+            });
+            
+            window.addEventListener('click', function(event) {
+                if (event.target === downloadModal) {
+                    downloadModal.style.display = 'none';
+                }
+            });
+            
+            // Обработка кнопок скачивания
+            const downloadBtns = document.querySelectorAll('.download-btn');
+            downloadBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const platform = this.textContent.includes('Windows') ? 'Windows' : 'Linux';
+                    alert(`Начата загрузка версии для ${platform}`);
+                    downloadModal.style.display = 'none';
+                });
             });
         });
-    });
-
-    // Анимация появления проектов при скролле
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry, index) => {
-            if(entry.isIntersecting){
-                setTimeout(() => {
-                    entry.target.classList.add('visible');
-                }, index * 150);
-            }
-        });
-    }, { threshold: 0.2 });
-    projects.forEach(project => observer.observe(project));
-
-    // Canvas звезды
-    const canvas = document.getElementById('starfield');
-    const ctx = canvas.getContext('2d');
-    let stars = [];
-
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        initStars();
-    }
-
-    function initStars() {
-        stars = [];
-        const numStars = 200;
-        for (let i = 0; i < numStars; i++) {
-            stars.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                radius: Math.random() * 1.5,
-                speed: Math.random() * 0.5 + 0.2
-            });
-        }
-    }
-
-    function animateStars() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        stars.forEach(star => {
-            star.x -= star.speed;
-            if (star.x < 0) star.x = canvas.width;
-            ctx.beginPath();
-            ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-            ctx.fillStyle = 'white';
-            ctx.fill();
-        });
-        requestAnimationFrame(animateStars);
-    }
-
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-    animateStars();
-</script>
+    </script>
+    
+    <!-- Font import -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
 </body>
 </html>
