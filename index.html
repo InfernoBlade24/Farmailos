@@ -11,6 +11,10 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Orbitron', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
 
         :root {
@@ -29,12 +33,50 @@
             min-height: 100vh;
             overflow-x: hidden;
             background-attachment: fixed;
+            position: relative;
+        }
+
+        /* Анимированный фон */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(0, 162, 255, 0.15);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-1000%) translateX(100%) rotate(360deg);
+                opacity: 0;
+            }
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            position: relative;
+            z-index: 1;
         }
 
         /* Header Styles */
@@ -61,8 +103,14 @@
         }
 
         @keyframes pulse {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.05); }
+            0% { 
+                transform: scale(1);
+                text-shadow: 0 0 10px rgba(0, 162, 255, 0.7);
+            }
+            100% { 
+                transform: scale(1.05);
+                text-shadow: 0 0 20px rgba(0, 162, 255, 0.9), 0 0 30px rgba(0, 162, 255, 0.5);
+            }
         }
 
         .logo-text {
@@ -123,6 +171,12 @@
             background: linear-gradient(to right, var(--neon-blue) 0%, #a5d8ff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            animation: titleGlow 3s infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0% { text-shadow: 0 0 20px rgba(0, 162, 255, 0.8); }
+            100% { text-shadow: 0 0 30px rgba(0, 162, 255, 1), 0 0 40px rgba(0, 162, 255, 0.6); }
         }
 
         .hero p {
@@ -150,6 +204,22 @@
         .cta-button:hover {
             transform: translateY(-3px);
             box-shadow: 0 0 25px rgba(0, 162, 255, 0.8);
+        }
+
+        .cta-button:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+            z-index: -1;
+        }
+
+        .cta-button:hover:before {
+            left: 100%;
         }
 
         /* Modal */
@@ -217,11 +287,75 @@
             font-size: 1.1rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
         }
 
         .download-btn:hover {
             background: rgba(0, 162, 255, 0.3);
             box-shadow: 0 0 15px rgba(0, 162, 255, 0.3);
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+        /* Notification Modal */
+        .notification-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .notification-content {
+            background: var(--card-bg);
+            border: 2px solid var(--neon-blue);
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 0 30px rgba(0, 162, 255, 0.5);
+            position: relative;
+            text-align: center;
+        }
+
+        .notification-icon {
+            font-size: 3rem;
+            color: #ffcc00;
+            margin-bottom: 20px;
+        }
+
+        .notification-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--neon-light);
+        }
+
+        .notification-text {
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .notification-btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, var(--neon-blue) 0%, #0066cc 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 162, 255, 0.5);
+        }
+
+        .notification-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(0, 162, 255, 0.8);
         }
 
         /* News Section */
@@ -432,6 +566,13 @@
 
         .feature-card:hover:before {
             opacity: 1;
+            animation: gradientMove 3s infinite linear;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .feature-card:hover {
@@ -451,6 +592,41 @@
             font-size: 1.5rem;
             margin-bottom: 15px;
             color: var(--neon-light);
+        }
+
+        /* Support Section */
+        .support-section {
+            margin: 60px 0;
+            text-align: center;
+        }
+
+        .support-options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .support-option {
+            background: var(--card-bg);
+            border: 1px solid rgba(0, 162, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            width: 250px;
+            transition: all 0.3s ease;
+        }
+
+        .support-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 25px rgba(0, 162, 255, 0.2);
+            border-color: rgba(0, 162, 255, 0.4);
+        }
+
+        .support-icon {
+            font-size: 2rem;
+            color: var(--neon-blue);
+            margin-bottom: 15px;
         }
 
         /* Footer */
@@ -473,14 +649,90 @@
             color: var(--text-color);
             text-decoration: none;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .footer-links a:hover {
             color: var(--neon-blue);
+            text-shadow: 0 0 10px rgba(0, 162, 255, 0.7);
         }
 
         .copyright {
             font-size: 0.9rem;
+            color: rgba(224, 224, 255, 0.7);
+        }
+
+        /* Protection Warning */
+        .protection-warning {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--neon-blue);
+            border-radius: 10px;
+            padding: 15px;
+            max-width: 300px;
+            box-shadow: 0 0 20px rgba(0, 162, 255, 0.5);
+            z-index: 100;
+            display: none;
+        }
+
+        /* Download Progress */
+        .download-progress {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--neon-blue);
+            border-radius: 10px;
+            padding: 15px;
+            width: 300px;
+            box-shadow: 0 0 20px rgba(0, 162, 255, 0.5);
+            z-index: 100;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .progress-title {
+            font-size: 1rem;
+            color: var(--neon-light);
+        }
+
+        .progress-close {
+            cursor: pointer;
+            font-size: 1.2rem;
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: rgba(0, 162, 255, 0.2);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-light));
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
             color: rgba(224, 224, 255, 0.7);
         }
 
@@ -509,6 +761,22 @@
             .filter-btn {
                 width: 200px;
             }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .support-options {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .download-progress {
+                width: 250px;
+                right: 10px;
+                bottom: 10px;
+            }
         }
     </style>
 </head>
@@ -519,15 +787,50 @@
             <span class="close-modal" id="closeModal">&times;</span>
             <h2 class="modal-title">Выберите платформу</h2>
             <div class="download-options">
-                <button class="download-btn">
+                <a href="#" class="download-btn" id="windowsDownload">
                     <i class="fab fa-windows"></i> Скачать для Windows
-                </button>
-                <button class="download-btn">
+                </a>
+                <a href="#" class="download-btn" id="linuxDownload">
                     <i class="fab fa-linux"></i> Скачать для Linux
-                </button>
+                </a>
             </div>
         </div>
     </div>
+
+    <!-- Окно оповещения для Linux -->
+    <div class="notification-modal" id="linuxNotification">
+        <div class="notification-content">
+            <div class="notification-icon">
+                <i class="fas fa-tools"></i>
+            </div>
+            <h3 class="notification-title">Версия для Linux в разработке</h3>
+            <p class="notification-text">В настоящее время версия для Linux находится в стадии тестирования и будет доступна в ближайшее время. Следите за обновлениями!</p>
+            <button class="notification-btn" id="closeNotification">Понятно</button>
+        </div>
+    </div>
+
+    <!-- Индикатор загрузки -->
+    <div class="download-progress" id="downloadProgress">
+        <div class="progress-header">
+            <div class="progress-title">Загрузка Farmailos для Windows</div>
+            <span class="progress-close" id="closeProgress">&times;</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-info">
+            <span id="progressPercentage">0%</span>
+            <span id="downloadSpeed">0 KB/s</span>
+        </div>
+    </div>
+
+    <!-- Предупреждение о защите -->
+    <div class="protection-warning" id="protectionWarning">
+        <p>⚠️ Копирование контента запрещено! Это официальный сайт Farmailos.</p>
+    </div>
+
+    <!-- Анимированный фон -->
+    <div class="bg-animation" id="bgAnimation"></div>
 
     <div class="container">
         <header>
@@ -537,11 +840,11 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="#">Главная</a></li>
-                    <li><a href="#">Игра</a></li>
-                    <li><a href="#">Обновления</a></li>
-                    <li><a href="#">Скачать</a></li>
-                    <li><a href="#">Поддержка</a></li>
+                    <li><a href="#" class="nav-active">Главная</a></li>
+                    <li><a href="#news">Новости</a></li>
+                    <li><a href="#updates">Обновления</a></li>
+                    <li><a href="#download">Скачать</a></li>
+                    <li><a href="#support">Поддержка</a></li>
                 </ul>
             </nav>
         </header>
@@ -552,7 +855,7 @@
             <button class="cta-button" id="downloadBtn">Загрузить</button>
         </section>
 
-        <section class="news-section">
+        <section class="news-section" id="news">
             <h2 class="section-title">Последние новости</h2>
             <div class="news-container">
                 <div class="news-card">
@@ -568,7 +871,7 @@
             </div>
         </section>
 
-        <section class="updates-catalog">
+        <section class="updates-catalog" id="updates">
             <h2 class="section-title">Версии игры</h2>
             
             <div class="update-filters">
@@ -636,25 +939,165 @@
                 <p>Соревнуйся с другом по количеству фрагов в захватывающем режиме выживания.</p>
             </div>
         </section>
+
+        <section class="support-section" id="support">
+            <h2 class="section-title">Поддержка</h2>
+            <p>Если у тебя возникли проблемы с игрой или есть предложения по улучшению, свяжись со мной:</p>
+            
+            <div class="support-options">
+                <div class="support-option">
+                    <div class="support-icon"><i class="fab fa-telegram"></i></div>
+                    <h3>Telegram</h3>
+                    <p>Напиши мне в Telegram для быстрой помощи</p>
+                    <a href="https://t.me/DeveloperO_O" target="_blank" class="download-btn" style="margin-top: 15px;">
+                        <i class="fab fa-telegram"></i> Написать
+                    </a>
+                </div>
+                
+                <div class="support-option">
+                    <div class="support-icon"><i class="fas fa-envelope"></i></div>
+                    <h3>Email</h3>
+                    <p>Отправь мне письмо с описанием проблемы</p>
+                    <a href="mailto:abduselimovdzabrail538@gmail.com" class="download-btn" style="margin-top: 15px;">
+                        <i class="fas fa-envelope"></i> Написать
+                    </a>
+                </div>
+            </div>
+        </section>
     </div>
 
     <footer>
         <div class="container">
             <div class="footer-links">
-                <a href="#">Политика конфиденциальности</a>
-                <a href="#">Условия использования</a>
-                <a href="#">Поддержка</a>
-                <a href="#">Социальные сети</a>
+                <a href="#support">Поддержка</a>
+                <a href="https://t.me/DeveloperO_O" target="_blank">Telegram</a>
             </div>
             <div class="copyright">
-                &copy; 2023 Farmailos. Все права защищены.
+                Farmailos &copy; 2023. Официальный сайт. Авторские права защищены.
             </div>
         </div>
     </footer>
 
     <script>
-        // Рабочий каталог обновлений с фильтрацией
+        // Создание анимированного фона
+        function createParticles() {
+            const container = document.getElementById('bgAnimation');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Случайный размер
+                const size = Math.random() * 10 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Случайная позиция
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                // Случайная длительность анимации
+                const duration = Math.random() * 20 + 10;
+                particle.style.animationDuration = `${duration}s`;
+                
+                // Случайная задержка
+                const delay = Math.random() * 5;
+                particle.style.animationDelay = `-${delay}s`;
+                
+                container.appendChild(particle);
+            }
+        }
+
+        // Функция для скачивания файла с Google Drive
+        function downloadFromGoogleDrive() {
+            const progressElement = document.getElementById('downloadProgress');
+            const progressFill = document.getElementById('progressFill');
+            const progressPercentage = document.getElementById('progressPercentage');
+            const downloadSpeed = document.getElementById('downloadSpeed');
+            
+            // Показываем индикатор загрузки
+            progressElement.style.display = 'block';
+            
+            // Имитация процесса загрузки
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 5;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    
+                    // Через 2 секунды после завершения "загрузки" открываем ссылку
+                    setTimeout(() => {
+                        // РЕАЛЬНАЯ ССЫЛКА НА СКАЧИВАНИЕ
+                        const downloadUrl = 'https://drive.google.com/uc?export=download&id=1g-8x_-_aPdj-6mCp-yrEes8fJZhCs8Gm';
+                        
+                        // Создаем скрытую ссылку для скачивания
+                        const link = document.createElement('a');
+                        link.href = downloadUrl;
+                        link.target = '_blank';
+                        link.download = 'Farmailos_Game_Windows.zip'; // Имя файла при скачивании
+                        
+                        // Автоматическое скачивание
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        
+                        // Скрываем индикатор через еще 3 секунды
+                        setTimeout(() => {
+                            progressElement.style.display = 'none';
+                        }, 3000);
+                    }, 2000);
+                }
+                
+                // Обновляем прогресс
+                progressFill.style.width = `${progress}%`;
+                progressPercentage.textContent = `${Math.round(progress)}%`;
+                
+                // Имитация скорости загрузки
+                const speed = Math.round(500 + Math.random() * 1500);
+                downloadSpeed.textContent = `${speed} KB/s`;
+            }, 100);
+        }
+
+        // Функция для показа уведомления о Linux
+        function showLinuxNotification() {
+            document.getElementById('linuxNotification').style.display = 'flex';
+        }
+
+        // Функция для закрытия уведомления
+        function closeNotification() {
+            document.getElementById('linuxNotification').style.display = 'none';
+        }
+
+        // Функция для закрытия индикатора загрузки
+        function closeProgress() {
+            document.getElementById('downloadProgress').style.display = 'none';
+        }
+
+        // Защита от инспектирования кода
+        function preventDevTools() {
+            // Блокировка F12, Ctrl+Shift+I, Ctrl+U и др.
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'F12' || 
+                    (e.ctrlKey && e.shiftKey && e.key === 'I') || 
+                    (e.ctrlKey && e.shiftKey && e.key === 'C') ||
+                    (e.ctrlKey && e.key === 'U') ||
+                    (e.ctrlKey && e.shiftKey && e.key === 'J') ||
+                    (e.ctrlKey && e.key === 'F5')) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
+            // Защита от инструментов разработчика
+            preventDevTools();
+            
+            // Создаем анимированный фон
+            createParticles();
+            
             // Filter buttons functionality
             const filterButtons = document.querySelectorAll('.filter-btn');
             const updateCards = document.querySelectorAll('.update-card');
@@ -684,29 +1127,120 @@
             const downloadBtn = document.getElementById('downloadBtn');
             const downloadModal = document.getElementById('downloadModal');
             const closeModal = document.getElementById('closeModal');
+            const windowsDownload = document.getElementById('windowsDownload');
+            const linuxDownload = document.getElementById('linuxDownload');
+            const closeNotificationBtn = document.getElementById('closeNotification');
+            const closeProgressBtn = document.getElementById('closeProgress');
             
+            // Открытие модального окна загрузки
             downloadBtn.addEventListener('click', function() {
                 downloadModal.style.display = 'flex';
             });
             
+            // Закрытие модального окна загрузки
             closeModal.addEventListener('click', function() {
                 downloadModal.style.display = 'none';
             });
             
+            // Скачивание для Windows
+            windowsDownload.addEventListener('click', function(e) {
+                e.preventDefault();
+                downloadModal.style.display = 'none';
+                downloadFromGoogleDrive();
+            });
+            
+            // Уведомление для Linux
+            linuxDownload.addEventListener('click', function(e) {
+                e.preventDefault();
+                downloadModal.style.display = 'none';
+                showLinuxNotification();
+            });
+            
+            // Закрытие уведомления для Linux
+            closeNotificationBtn.addEventListener('click', closeNotification);
+            
+            // Закрытие индикатора загрузки
+            closeProgressBtn.addEventListener('click', closeProgress);
+            
+            // Закрытие модальных окон при клике вне их
             window.addEventListener('click', function(event) {
                 if (event.target === downloadModal) {
                     downloadModal.style.display = 'none';
                 }
+                if (event.target === document.getElementById('linuxNotification')) {
+                    closeNotification();
+                }
             });
             
-            // Обработка кнопок скачивания
-            const downloadBtns = document.querySelectorAll('.download-btn');
-            downloadBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const platform = this.textContent.includes('Windows') ? 'Windows' : 'Linux';
-                    alert(`Начата загрузка версии для ${platform}`);
-                    downloadModal.style.display = 'none';
+            // Плавная прокрутка для навигации
+            document.querySelectorAll('nav a, .footer-links a').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId.startsWith('#')) {
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            window.scrollTo({
+                                top: targetElement.offsetTop - 20,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
                 });
+            });
+            
+            // Улучшенная защита контента
+            let warningTimeout;
+            const warning = document.getElementById('protectionWarning');
+            
+            // Запрет копирования
+            document.addEventListener('copy', function(e) {
+                e.preventDefault();
+                warning.textContent = '⚠️ Копирование контента запрещено! Это официальный сайт Farmailos.';
+                warning.style.display = 'block';
+                
+                clearTimeout(warningTimeout);
+                warningTimeout = setTimeout(() => {
+                    warning.style.display = 'none';
+                }, 3000);
+            });
+            
+            // Запрет контекстного меню
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                warning.textContent = '⚠️ Контекстное меню отключено для защиты контента.';
+                warning.style.display = 'block';
+                
+                clearTimeout(warningTimeout);
+                warningTimeout = setTimeout(() => {
+                    warning.style.display = 'none';
+                }, 3000);
+            });
+            
+            // Запрет перетаскивания изображений
+            document.addEventListener('dragstart', function(e) {
+                if (e.target.tagName === 'IMG') {
+                    e.preventDefault();
+                    warning.textContent = '⚠️ Сохранение изображений запрещено.';
+                    warning.style.display = 'block';
+                    
+                    clearTimeout(warningTimeout);
+                    warningTimeout = setTimeout(() => {
+                        warning.style.display = 'none';
+                    }, 3000);
+                }
+            });
+            
+            // Защита от выделения текста
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                warning.textContent = '⚠️ Выделение текста ограничено для защиты контента.';
+                warning.style.display = 'block';
+                
+                clearTimeout(warningTimeout);
+                warningTimeout = setTimeout(() => {
+                    warning.style.display = 'none';
+                }, 3000);
             });
         });
     </script>
@@ -714,4 +1248,4 @@
     <!-- Font import -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
 </body>
-</html>
+</html> 
